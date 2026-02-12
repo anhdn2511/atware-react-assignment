@@ -7,6 +7,8 @@ import dishData from "./data/dishes.json";
 import {z} from "zod";
 import { MealType } from "./data/MealType";
 import { Restaurant } from "./data/Restaurant";
+import {useForm} from "react-hook-form";
+import {zodResolver} from "@hookform/resolvers/zod";
 
 interface OrderData {
   meal: string;
@@ -16,8 +18,10 @@ interface OrderData {
 }
 
 const schema = z.object({
-  meal: z.enum(MealType),
-  people: z.number().int().positive(),
+  meal: z.enum(MealType, {
+    error: () => ({ message: "Invalid meal type" })
+  }),
+  people: z.number().int().positive().min(1).max(10),
   restaurant: z.enum(Restaurant),
   dishes: z.array(z.string()),
 })
@@ -30,6 +34,17 @@ const App: React.FC = () => {
     restaurant: "",
     dishes: [],
   });
+
+  const form = useForm({
+    resolver: zodResolver(schema),
+    defaultValues: {
+      meal: MealType.BREAKFAST,
+      people: 1
+    },
+    mode: "onChange"
+  })
+
+  const { meal, people, dishes, restaurant } = form.watch()
 
   const filteredRestaurants = Array.from(
     new Set(
@@ -47,6 +62,14 @@ const App: React.FC = () => {
     setFormData((prev) => ({ ...prev, ...newData }));
   };
 
+  const handleNextStep1 = async () => {
+    await form.trigger(["meal", "people"]);
+    if (form.formState.errors.meal || form.formState.errors.people) {
+      return;
+    }
+    setStep((prev) => prev + 1);
+  };
+
   const handleNext = () => {
     setStep((prev) => prev + 1);
   };
@@ -59,9 +82,10 @@ const App: React.FC = () => {
     <main>
       {step === 1 && (
         <Step1
-          formData={formData}
-          updateData={updateData}
-          onNext={handleNext}
+          register={form.register}
+          formData={{ meal, people }}
+          peopleError={form.formState.errors.people?.message}
+          onNext={handleNextStep1}
         />
       )}
       {step === 2 && (

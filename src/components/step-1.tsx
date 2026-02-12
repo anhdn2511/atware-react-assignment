@@ -1,15 +1,16 @@
 import React from "react";
 
 interface Step1Props {
+    register: any;
   formData: {
     meal: string;
     people: number;
   };
-  updateData: (data: Partial<{ meal: string; people: number }>) => void;
   onNext: () => void;
+    peopleError?: string
 }
 
-const Step1: React.FC<Step1Props> = ({ formData, updateData, onNext }) => {
+const Step1: React.FC<Step1Props> = ({ register, formData, onNext, peopleError }) => {
   return (
     <div
       style={{
@@ -42,11 +43,10 @@ const Step1: React.FC<Step1Props> = ({ formData, updateData, onNext }) => {
       <div style={{ marginTop: "40px" }}>
         <p>Please Select a meal</p>
         <select
+            {...register("meal")}
           value={formData.meal}
-          onChange={(e) => updateData({ meal: e.target.value })}
           style={{ width: "150px", padding: "5px", border: "2px solid black" }}
         >
-          <option value="">---</option>
           <option value="breakfast">Breakfast</option>
           <option value="lunch">Lunch</option>
           <option value="dinner">Dinner</option>
@@ -56,15 +56,14 @@ const Step1: React.FC<Step1Props> = ({ formData, updateData, onNext }) => {
       <div>
         <p>Please Enter Number of people</p>
         <input
-          type="number"
+         {...register("people", { valueAsNumber: true })}
+         type="number"
           value={formData.people}
-          onChange={(e) =>
-            updateData({ people: parseInt(e.target.value) || 1 })
-          }
           min={1}
           max={10}
           style={{ width: "140px", padding: "5px", border: "2px solid black" }}
         />
+          <div style={{ color: 'red' }}>{peopleError}</div>
       </div>
 
       <div
