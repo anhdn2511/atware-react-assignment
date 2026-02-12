@@ -4,6 +4,7 @@ import Step2 from "./components/step-2";
 import Step3 from "./components/step-3";
 import Step4 from "./components/step-4";
 import dishData from "./data/dishes.json";
+import {z} from "zod";
 
 interface OrderData {
   meal: string;
@@ -11,6 +12,13 @@ interface OrderData {
   restaurant: string;
   dishes: { id: number; name: string; servings: number }[];
 }
+
+const schema = z.object({
+  meal: z.string(),
+  people: z.number(),
+  restaurant: z.string(),
+  dishes: z.array(z.string()),
+})
 
 const App: React.FC = () => {
   const [step, setStep] = useState(1);
