@@ -5,6 +5,8 @@ import Step3 from "./components/step-3";
 import Step4 from "./components/step-4";
 import dishData from "./data/dishes.json";
 import {z} from "zod";
+import { MealType } from "./data/MealType";
+import { Restaurant } from "./data/Restaurant";
 
 interface OrderData {
   meal: string;
@@ -14,9 +16,9 @@ interface OrderData {
 }
 
 const schema = z.object({
-  meal: z.string(),
-  people: z.number(),
-  restaurant: z.string(),
+  meal: z.enum(MealType),
+  people: z.number().int().positive(),
+  restaurant: z.enum(Restaurant),
   dishes: z.array(z.string()),
 })
 

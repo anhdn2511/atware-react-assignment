@@ -61,6 +61,7 @@ const Step2: React.FC<Step2Props> = ({
             </option>
           ))}
         </select>
+        
       </div>
 
       <div
